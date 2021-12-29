@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-var user = null
+var user = null;
+var balance = null;
+var login = false;
 
 app.set('view engine', 'ejs');
 app.use(express.static('views'));
@@ -24,7 +26,7 @@ connection.connect((err) => {
 
 app.get('/', (req, res) => {
     console.log('Responding to root route');
-    res.render('index.ejs');
+    res.render('index', {login: login});
 });
 
 app.get('/signup', (req, res) => {
@@ -37,14 +39,39 @@ app.get('/login', (req, res) => {
     res.render('login.ejs');
 });
 
+app.get('/logout', (req, res) => {
+    console.log('Responding to logout route');
+    user = null;
+    balance = null;
+    login = false;
+    res.render('index', {login: login});
+});
+
+app.get('/transfer', (req, res) => {
+    console.log('Responding to transfer route');
+    if (user != null) {
+        connection.query('SELECT balance FROM users WHERE username = ?', user, (err, result) => {
+            if (err) throw err;
+            balance = result[0].balance;
+            res.render('transfer', {user: user, balance: balance});
+        });
+    }
+    else {
+        res.render('index', {login: login});
+    }
+});
+
 app.get('/balance', (req, res) => {
     console.log('Responding to balance route');
     if (user != null) {
-
-        res.render('balance', {balance: 0});
+        connection.query('SELECT balance FROM users WHERE username = ?', user, (err, result) => {
+            if (err) throw err;
+            balance = result[0].balance;
+            res.render('balance', {balance: balance});
+        });
     }
     else {
-        res.render('index.ejs');
+        res.render('index', {login: login});
     }
 });
 
@@ -64,6 +91,8 @@ app.post('/process_login', urlencodedParser, (req, res) => {
             if (result[0].password = req.body.password) {
                 console.log('Login successful');
                 user = req.body.username;
+                login = true;
+                res.render('index', {login: login});
             }
             else {
                 console.log('Login unsuccessful incorrect password');
@@ -72,9 +101,7 @@ app.post('/process_login', urlencodedParser, (req, res) => {
         else {
             console.log('Login unsuccessful username not found');
         }
-    });
-    
-    res.render('index.ejs');
+    });  
 });
 
 app.post('/process_signup', urlencodedParser, (req, res) => {
@@ -84,7 +111,7 @@ app.post('/process_signup', urlencodedParser, (req, res) => {
     }
 
     console.log(response);
-    res.render('index.ejs');
+    res.render('index', {login: login});
 });
 
 var server = app.listen(8081, () => {

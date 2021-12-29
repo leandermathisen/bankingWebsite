@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
     <section id="header">
@@ -21,9 +22,6 @@
                         <ul class="nav-item active">
                             <a class="nav-link" href="/signup">Sign Up</a>
                         </ul>
-                        <ul class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -32,8 +30,8 @@
     <section id="login text-entry">
         <form action="/process_login" method="POST">
             Username: <input type="text" name="username"> <br>
-            Password: <input type="text" name="password">
-            <input type="submit" value="Submit">
+            Password: <input type="password" name="password">
+            <button type="submit">Submit</button>
         </form>
     </section>
 </body>

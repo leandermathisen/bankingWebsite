@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balance</title>
+    <title>Transfer</title>
     <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
@@ -16,11 +16,11 @@
                         <h1>Banking Website</h1>
                     </div>
                     <div class="page-title text-center">
-                        <h3>Balances</h3>
+                        <h3>Transfers</h3>
                     </div>
                     <div class="navbar">
                         <ul class="nav-item">
-                            <a class="nav-link" href="/transfer">Transfer</a>
+                            <a class="nav-link" href="/balance">Balance</a>
                         </ul>
                         <ul class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>
@@ -32,6 +32,7 @@
     </section>
     <section id="balance field">
         <h3>
+            Hello <%= user %>
             Your Balance is:
             <%= balance %>
         </h3>

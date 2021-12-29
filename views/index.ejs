@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index</title>
+    <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
     <section id="header">
@@ -15,16 +16,31 @@
                         <h1>Banking Website</h1>
                     </div>
                     <div class="navbar">
-                        <ul class="nav-item active">
-                            <a class="nav-link" href="/signup">Sign Up</a>
-                        </ul>
-                        <ul class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </ul>
+                        <% if (!login) { %>
+                            <ul class="nav-item active">
+                                <a class="nav-link" href="/signup">Sign Up</a>
+                            </ul>
+                            <ul class="nav-item">
+                                <a class="nav-link" href="/login">Login</a>
+                            </ul>
+                        <% } else { %>
+                            <ul class="nav-item">
+                                <a class="nav-link" href="/balance">Balance</a>
+                            </ul>
+                            <ul class="nav-item">
+                                <a class="nav-link" href="/transfer">Transfer</a>
+                            </ul>
+                            <ul class="nav-item">
+                                <a class="nav-link" href="/logout">Logout</a>
+                            </ul>
+                        <% } %>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+    <section id="index main-text">
+        <p>Hello and welcome to our banking website where you can check balance and transfer funds.</p>
     </section>
 </body>
 </html>
