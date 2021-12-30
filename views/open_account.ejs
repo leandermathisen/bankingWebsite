@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transfer</title>
+    <title>Open Account</title>
     <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
@@ -16,14 +16,14 @@
                         <h1>Banking Website</h1>
                     </div>
                     <div class="page-title text-center">
-                        <h3>Transfers</h3>
+                        <h3>Open An Account</h3>
                     </div>
                     <div class="navbar">
                         <ul class="nav-item">
                             <a class="nav-link" href="/balance">Balance</a>
                         </ul>
                         <ul class="nav-item">
-                            <a class="nav-link" href="/open_account">Open Account</a>
+                            <a class="nav-link" href="/transfer">Transfer</a>
                         </ul>
                         <ul class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>
@@ -33,18 +33,17 @@
             </div>
         </div>
     </section>
-    <section id="balance field">
+    <section id="welcome-text">
         <h3>
             Hello <%= user.first_name %> <%= user.last_name %>,
         </h3>
-        <h3>
-            Accounts and Balances:
-        </h3>
-        <ul>
-            <% user.accounts.forEach((account)=>{%>
-                <p>(<%=account.account_type%>) <%=account.account_number%>: <%=account.account_balance%></p>
-            <%});%>
-        </ul>
+    </section>
+    <section id="open_account text-entry">
+        <form action="/process_open_account" method="POST">
+            Account Type: <input type="text" name="account_type"> <br>
+            Initial Deposit: <input type="number" name="account_balance">
+            <button type="submit">Open Account</button>
+        </form>
     </section>
 </body>
 </html>

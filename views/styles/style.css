@@ -1,0 +1,27 @@
+#header
+{
+    height: 25vh;
+    background: rgb(73, 105, 211);
+    background-position: center;
+    position: sticky;
+}
+
+.title h1 {
+    color: #fff;
+    font-size: 40px;
+    padding-top: 5px;
+    text-align: center;
+}
+
+.page-title h3 {
+    color: #fff;
+    font-size: 25px;
+    padding-top: 5px;
+    text-align: center;
+}
+
+.navbar a 
+{
+    color: #f2f2f2;
+    font-size: 15px;
+}

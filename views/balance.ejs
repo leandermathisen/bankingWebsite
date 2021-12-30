@@ -23,6 +23,9 @@
                             <a class="nav-link" href="/transfer">Transfer</a>
                         </ul>
                         <ul class="nav-item">
+                            <a class="nav-link" href="/open_account">Open Account</a>
+                        </ul>
+                        <ul class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>
                         </ul>
                     </div>
@@ -32,9 +35,16 @@
     </section>
     <section id="balance field">
         <h3>
-            Your Balance is:
-            <%= balance %>
+            Hello <%= user.first_name %> <%= user.last_name %>,
         </h3>
+        <h3>
+            Accounts and Balances:
+        </h3>
+        <ul>
+            <% user.accounts.forEach((account)=>{%>
+                <p>(<%=account.account_type%>) <%=account.account_number%>: <%=account.account_balance%></p>
+            <%});%>
+        </ul>
     </section>
 </body>
 </html>

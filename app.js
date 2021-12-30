@@ -2,12 +2,12 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
+const User = require('./user.js');
+const Account = require('./account.js');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-var user = null;
-var balance = null;
-var login = false;
+var user = new User();
 
 app.set('view engine', 'ejs');
 app.use(express.static('views'));
@@ -26,7 +26,7 @@ connection.connect((err) => {
 
 app.get('/', (req, res) => {
     console.log('Responding to root route');
-    res.render('index', {login: login});
+    res.render('index', {user: user});
 });
 
 app.get('/signup', (req, res) => {
@@ -41,37 +41,43 @@ app.get('/login', (req, res) => {
 
 app.get('/logout', (req, res) => {
     console.log('Responding to logout route');
-    user = null;
-    balance = null;
-    login = false;
-    res.render('index', {login: login});
+    user.clear();
+    res.render('index', {user: user});
 });
 
 app.get('/transfer', (req, res) => {
     console.log('Responding to transfer route');
-    if (user != null) {
-        connection.query('SELECT balance FROM users WHERE username = ?', user, (err, result) => {
+    if (user.username != null) {
+        connection.query('SELECT * FROM accounts WHERE username = ?', user.username, (err, result) => {
             if (err) throw err;
-            balance = result[0].balance;
-            res.render('transfer', {user: user, balance: balance});
+            user.accounts = [];
+            for (let i = 0; i < result.length; i++) {
+                var account = new Account(result[i].account_number, result[i].account_balance, result[i].account_type);
+                user.accounts.push(account);
+            }
+            res.render('transfer', {user: user});
         });
     }
     else {
-        res.render('index', {login: login});
+        res.render('index', {user: user});
     }
 });
 
 app.get('/balance', (req, res) => {
     console.log('Responding to balance route');
-    if (user != null) {
-        connection.query('SELECT balance FROM users WHERE username = ?', user, (err, result) => {
+    if (user.username != null) {
+        connection.query('SELECT * FROM accounts WHERE username = ?', user.username, (err, result) => {
             if (err) throw err;
-            balance = result[0].balance;
-            res.render('balance', {balance: balance});
+            user.accounts = [];
+            for (let i = 0; i < result.length; i++) {
+                var account = new Account(result[i].account_number, result[i].account_balance, result[i].account_type);
+                user.accounts.push(account);
+            }
+            res.render('balance', {user: user});
         });
     }
     else {
-        res.render('index', {login: login});
+        res.render('index', {user: user});
     }
 });
 
@@ -83,6 +89,20 @@ app.get('/users', (req, res) => {
     });
 });
 
+app.get('/open_account', (req, res) => {
+    console.log('Responding to open account route');
+    res.render('open_account', {user: user});
+});
+
+app.post('/process_open_account', urlencodedParser, (req, res) => {
+    var sql = 'INSERT INTO accounts (account_type, account_balance, username) VALUES (?, ?, ?)';
+    connection.query(sql, [req.body.account_type, req.body.account_balance, user.username], (err, result) => {
+        if (err) throw err;
+        console.log('Successfully opened an account');
+        res.render('index', {user: user});
+    });
+});
+
 app.post('/process_login', urlencodedParser, (req, res) => {
     var sql = 'SELECT * FROM users WHERE username = ?';
     connection.query(sql, req.body.username, (err, result) => {
@@ -90,9 +110,12 @@ app.post('/process_login', urlencodedParser, (req, res) => {
         if (result.length) {
             if (result[0].password = req.body.password) {
                 console.log('Login successful');
-                user = req.body.username;
-                login = true;
-                res.render('index', {login: login});
+                user.username = req.body.username;
+                user.login = true;
+                user.first_name = result[0].first_name;
+                user.last_name = result[0].last_name;
+                user.email = result[0].email;
+                res.render('index', {user: user});
             }
             else {
                 console.log('Login unsuccessful incorrect password');
@@ -105,13 +128,19 @@ app.post('/process_login', urlencodedParser, (req, res) => {
 });
 
 app.post('/process_signup', urlencodedParser, (req, res) => {
-    response = {
-        username:req.body.username,
-        password:req.body.password
-    }
+    var sql = 'INSERT INTO users (username, password, email, first_name, last_name) VALUES (?, ?, ?, ?, ?)';
+    connection.query(sql, [req.body.username, req.body.password, req.body.email, req.body.first_name, req.body.last_name], (err, result) => {
+        if (err) throw err;
+        user.username = req.body.username;
+        user.login = true;
+        user.first_name = req.body.first_name;
+        user.last_name = req.body.last_name;
+        user.email = req.body.email;
+        console.log('Sign up successful');
+        res.render('index', {user: user});
+    });
 
-    console.log(response);
-    res.render('index', {login: login});
+    
 });
 
 var server = app.listen(8081, () => {
